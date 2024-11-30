@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #865FF1, #B66AFB, #CE70FD, #A466F7);
+        }
+        
+        .container {
+            text-align: center;
+            width: 350px;
+        }
+        
+        #settings {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        select {
+            padding: 5px;
+            font-size: 14px;
+        }
+        
+        #score {
+            font-size: 18px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgb(207, 206, 206);
+            color: rgb(8, 8, 8);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 5px rgba(131, 130, 130, 0.5);
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        
+        .cell.disabled {
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="settings">
+            <select id="modeSelect" onchange="changeMode()">
+                <option value="single">Single Player</option>
+                <option value="double">Two Player</option>
+            </select>
+            <select id="themeSelect" onchange="changeTheme()">
+                <option value="default">Default</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+            </select>
+            <select id="symbolSelect" onchange="changeSymbols()">
+                <option value="default">X, O</option>
+                <option value="emoji1">❤️, 💔</option>
+                <option value="emoji2">🔥, 🧊</option>
+                <option value="emoji3">🌞, 🌛</option>
+            </select>
+        </div>
+        <div id="score">
+            <span id="player1Label">Player 1:</span> <span id="player1Score">0</span>
+            <span id="player2Label">Player 2:</span> <span id="player2Score">0</span>
+        </div>
+        <div class="board">
+            <div class="cell" onclick="handleMove(0)"></div>
+            <div class="cell" onclick="handleMove(1)"></div>
+            <div class="cell" onclick="handleMove(2)"></div>
+            <div class="cell" onclick="handleMove(3)"></div>
+            <div class="cell" onclick="handleMove(4)"></div>
+            <div class="cell" onclick="handleMove(5)"></div>
+            <div class="cell" onclick="handleMove(6)"></div>
+            <div class="cell" onclick="handleMove(7)"></div>
+            <div class="cell" onclick="handleMove(8)"></div>
+        </div>
+        <button onclick="Restart()">Restart</button>
+    </div>
+    <script>
+        let board = Array(9).fill(null);
+        let player1Score = 0;
+        let player2Score = 0;
+        let player1Symbol = "X";
+        let player2Symbol = "O";
+        let winningCells = [];
+        let currentPlayer = 1;
+        let mode = "single";
+
+        function handleMove(index) {
+            if (!board[index]) {
+                board[index] = currentPlayer === 1 ? player1Symbol : player2Symbol;
+                renderBoard();
+                if (checkWin(currentPlayer === 1 ? player1Symbol : player2Symbol)) {
+                    highlightWinningCells();
+                    if (currentPlayer === 1) player1Score++;
+                    else player2Score++;
+                    updateScore();
+                    setTimeout(resetBoard, 2000);
+                    return;
+                } else if (board.every(cell => cell)) {
+                    resetBoard();
+                    return;
+                }
+                if (mode === "single" && currentPlayer === 1) {
+                    player2Move();
+                } else {
+                    currentPlayer = currentPlayer === 1 ? 2 : 1;
+                }
+            }
+        }
+
+        function player2Move() {
+            let availableMoves = board.map((val, idx) => (val === null ? idx : null)).filter(val => val !== null);
+            let move = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+            board[move] = player2Symbol;
+            renderBoard();
+            if (checkWin(player2Symbol)) {
+                highlightWinningCells();
+                player2Score++;
+                updateScore();
+                setTimeout(resetBoard, 2000);
+            } else if (board.every(cell => cell)) {
+                resetBoard();
+            }
+        }
+
+        function renderBoard() {
+            document.querySelectorAll(".cell").forEach((cell, index) => {
+                cell.textContent = board[index];
+                cell.classList.toggle("disabled", board[index] !== null);
+                cell.style.backgroundColor = winningCells.includes(index) ? "#90EE90" : "#ffffff";
+            });
+        }
+
+        function checkWin(symbol) {
+            const winPatterns = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+            const winningPattern = winPatterns.find(pattern => pattern.every(index => board[index] === symbol));
+            if (winningPattern) {
+                winningCells = winningPattern;
+                return true;
+            }
+            winningCells = [];
+            return false;
+        }
+
+        function highlightWinningCells() {
+            renderBoard();
+        }
+
+        function updateScore() {
+            document.getElementById("player1Score").textContent = player1Score;
+            document.getElementById("player2Score").textContent = player2Score;
+        }
+
+        function resetBoard() {
+            board = Array(9).fill(null);
+            winningCells = [];
+            currentPlayer = 1;
+            renderBoard();
+        }
+
+        function Restart() {
+            player1Score = 0;
+            player2Score = 0;
+            updateScore();
+            resetBoard();
+        }
+
+        function changeMode() {
+            mode = document.getElementById("modeSelect").value;
+            if (mode === "single") {
+                document.getElementById("player2Label").textContent = "Computer:";
+            } else {
+                document.getElementById("player2Label").textContent = "Player 2:";
+            }
+            resetBoard();
+        }
+
+        function changeTheme() {
+            const theme = document.getElementById("themeSelect").value;
+            if (theme === "default") {
+                document.body.style.background = "linear-gradient(135deg, #865FF1, #B66AFB, #CE70FD, #A466F7)";
+            } else if (theme === "dark") {
+                document.body.style.background = "linear-gradient(#1A1A1D,#333)";
+            } else if (theme === "light") {
+                document.body.style.background = "linear-gradient(115deg, #F6F7C4,#A1EEBD,#C9E6F0,#608BC1)";
+            }
+        }
+
+        function changeSymbols() {
+            const symbolSet = document.getElementById("symbolSelect").value;
+            if (symbolSet === "default") {
+                player1Symbol = "X";
+                player2Symbol = "O";
+            } else if (symbolSet === "emoji1") {
+                player1Symbol = "❤️";
+                player2Symbol = "💔";
+            } else if (symbolSet === "emoji2") {
+                player1Symbol = "🔥";
+                player2Symbol = "🧊";
+            } else if (symbolSet === "emoji3") {
+                player1Symbol = "🌞";
+                player2Symbol = "🌛";
+            }
+            resetBoard();
+        }
+    </script>
+</body>
+
+</html>

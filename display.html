@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIC TAC TOE</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #9d00ff, #000033);
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: transparent;
+            position: relative;
+        }
+        
+        .emoji {
+            position: absolute;
+            font-size: 40px;
+            pointer-events: none;
+        }
+        
+        .star1 {
+            top: 100px;
+            right: 400px;
+            transform: rotate(20deg);
+            font-size: 40px;
+        }
+        
+        .star2 {
+            top: 175px;
+            right: 500px;
+            transform: rotate(30deg);
+            font-size: 30px;
+        }
+        
+        .star3 {
+            bottom: 250px;
+            right: 350px;
+            transform: rotate(30deg);
+            font-size: 50px;
+        }
+        
+        .rocket {
+            top: 300px;
+            left: 375px;
+            transform: rotate(360deg);
+            font-size: 50px;
+        }
+        
+        .typing-heading {
+            font-size: 2em;
+            font-weight: bold;
+            background: linear-gradient(90deg, #f7d352, #d655f0, #3aeef1);
+            -webkit-background-clip: text;
+            color: transparent;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid #333;
+            animation: typing 1s steps(10, end), blink 0.6s step-end infinite alternate;
+        }
+        
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+            to {
+                width: 25%;
+            }
+        }
+        
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+        
+        .clickable-heading {
+            font-size: 5em;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.5s ease-out;
+        }
+        
+        .clickable-heading a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .clickable-heading:hover {
+            color: #fbfbfc;
+        }
+        
+        p {
+            font-size: 20px;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="emoji star1">⭐</div>
+    <div class="emoji star2">🌟</div>
+    <div class="emoji star3">⭐</div>
+    <div class="emoji rocket">🚀</div>
+
+    <div class="container">
+        <h1 class="typing-heading clickable-heading">
+            <a href="index.html">TIC TAC TOE</a>
+        </h1>
+        <p>❌Let's Play!⭕</p>
+    </div>
+</body>
+
+</html>
